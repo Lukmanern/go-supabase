@@ -232,7 +232,7 @@ func get(query string) {
 	checkError(err)
 
 	// Print a header message
-	fmt.Println("id todo (s:status) (d:deleted_at)")
+	fmt.Println("\nid todo (s:status) (d:deleted_at)")
 
 	// Iterate over the result rows
 	for rows.Next() {
@@ -263,7 +263,7 @@ func checkingRowsAffected(rowsAffected int64, functionName string) {
 	// If at least one row was affected...
 	if rowsAffected > 0 {
 		// ...print a success message.
-		fmt.Printf("> Success %s, affect %v rows in database", functionName, rowsAffected)
+		fmt.Printf("> Success %s, affect %v rows in database\n", functionName, rowsAffected)
 		// stop the function
 		return
 	}
@@ -425,31 +425,9 @@ func hardReset() {
 		deleted_at timestamp default null 
 	);`
 
-	// Initialize variables
-	var err error
-	var rowsCounter int
-	var rows *sql.Rows
-
 	// Execute the reset SQL statement
-	_, err = db.Exec(resetSQL)
+	_, err := db.Exec(resetSQL)
 	checkError(err)
-
-	// Get the number of rows in the todos table
-	rows, err = db.Query("SELECT COUNT(*) FROM todos")
-	checkError(err)
-
-	// Iterate over the rows and get the count
-	for rows.Next() {   
-		err = rows.Scan(&rowsCounter)
-		checkError(err)
-
-		// If the count is greater than 0, print a message
-		if rowsCounter > 0 {
-			fmt.Println("> Failed: Hard Reset Failed")
-			// Stop function
-			return
-		}
-	}
 
 	// Print a success message
 	fmt.Println("> Success: Hard Reset")

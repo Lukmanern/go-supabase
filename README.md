@@ -13,6 +13,7 @@ A simple command-line todo list application written in Go, using a PostgreSQL da
 6. Restore TODO (From SoftDelete)
 7. Destroy (Delete Permanent)
 8. Hard Reset (DROP TODO TABLE -> RECREATE TABLE)
+9. Verify User Action (For Destroy and Hard Reset)
 
 # Set Up Note
 
@@ -32,7 +33,7 @@ password=ALWAYS_SECRET
 
 2. Variables
 
-Loot at `func getENV()`
+Loot at `func getENV()`, and don't forget to change the `path` value.
 
 ```sh
 path := "C:/Users/Lenovo/go/src/DB_CLI/.env"
@@ -46,4 +47,4 @@ Supabase is designed to be easy to use and offers a number of features that make
 
 In addition to these core features, Supabase also offers a number of other tools and services that can help you build better web applications. It has a powerful set of API functions that allow you to do things like search, sort, and filter data, and it has a number of integrations with popular third-party tools such as Stripe, Twilio, and Slack.
 
-Overall, Supabase is a powerful and flexible platform for building modern web applications, and it is particularly well-suited for building real-time applications that need to handle large amounts of data and provide real-time updates to users.
+Overall, Supabase is a `powerful` and `flexible` platform for building modern web applications, and it is particularly well-suited for building real-time applications that need to handle large amounts of data and provide real-time updates to users.
