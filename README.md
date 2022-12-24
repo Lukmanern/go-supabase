@@ -8,15 +8,16 @@ A simple command-line todo list application written in Go, using a PostgreSQL da
 1. Create TODO
 2. Read TODO (in 3 ways)
 3. Update TODO (Edit)
-4. Update Status TODO
+4. Update TODO Status
 5. SoftDelete TODO
 6. Restore TODO (From SoftDelete)
 7. Destroy (Delete Permanent)
 8. Hard Reset (DROP TODO TABLE -> RECREATE TABLE)
 
-# .env file
+# Set Up Note
 
-Copy .env.example -> .env
+1. ENV File
+   Copy .env.example -> .env
 
 ```sh
 for unix -> cp .env.example .env
@@ -27,6 +28,14 @@ user=postgres
 port=5432
 host=MAYBE_SECRET
 password=ALWAYS_SECRET
+```
+
+2. Variables
+
+Loot at `func getENV()`
+
+```sh
+path := "C:/Users/Lenovo/go/src/DB_CLI/.env"
 ```
 
 # Supabase
