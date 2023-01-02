@@ -20,6 +20,9 @@ type Todos struct {
 	Todo, Status, Created_at string
 	Deleted_at 			 sql.NullString
 }
+// read about sql.NullString 
+// https://stackoverflow.com/questions/40092155/difference-between-string-and-sql-nullstring
+// http://go-database-sql.org/nulls.html
 
 var db	= databaseConnection()
 var scanner = bufio.NewScanner(os.Stdin)
