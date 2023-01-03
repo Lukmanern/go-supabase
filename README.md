@@ -1,4 +1,4 @@
-![USAGE.PNG](https://github.com/Lukmanern/go-supabase/usage.png)
+![USAGE.PNG](https://raw.githubusercontent.com/Lukmanern/go-supabase/master/usage.png)
 
 # Go ToDoList with Supabase
 
