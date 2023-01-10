@@ -22,10 +22,15 @@ A simple command-line todo list application written in Go, using a PostgreSQL da
 1. ENV File
    Copy .env.example -> .env
 
+for unix, command :
+
 ```sh
-for unix -> cp .env.example .env
+cp .env.example .env
+```
 
 or create manual :
+
+```sh
 dbname=postgres
 user=postgres
 port=5432
