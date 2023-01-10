@@ -14,15 +14,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Fields for storing todo information
+// Fields for storing TODO
 type Todos struct {
 	Id 				 uint64
 	Todo, Status, Created_at string
 	Deleted_at 			 sql.NullString
 }
-// read about sql.NullString 
-// https://stackoverflow.com/questions/40092155/difference-between-string-and-sql-nullstring
-// http://go-database-sql.org/nulls.html
 
 var db	= databaseConnection()
 var scanner = bufio.NewScanner(os.Stdin)
@@ -33,7 +30,6 @@ func main() {
 	var err error
 	var todoStatus = []string{"done", "inprogress", "todo"}
 
-	// fmt.Print("\nGoToDoList with SupaBase\n\n")
 	showBanner()
 	for {
 		showOptions()
