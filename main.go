@@ -5,12 +5,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"go-supabase/banner"
+	"go-supabase/database"
+	"go-supabase/handler"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -21,7 +23,7 @@ type Todos struct {
 	Deleted_at 			 sql.NullString
 }
 
-var db	= databaseConnection()
+var db	= database.DatabaseConnection()
 var scanner = bufio.NewScanner(os.Stdin)
 
 func main() {
@@ -30,11 +32,11 @@ func main() {
 	var err error
 	var todoStatus = []string{"done", "inprogress", "todo"}
 
-	showBanner()
+	banner.ShowBanner()
 	for {
 		showOptions()
 		userInput, err = strconv.ParseUint(getUserInput("Option : "), 10, 64)
-		checkError(err)
+		handler.CheckError(err)
 
 		switch userInput{
 		case 0:
@@ -56,19 +58,19 @@ func main() {
 		case 5:
 			fmt.Println("> Edit Todo")
 			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
-			checkError(err)
+			handler.CheckError(err)
 			todo = getUserInput("New Todo : ")
 			update(index, todo)
 
 		case 6:
 			fmt.Println("> Update Todo's Status")
 			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
-			checkError(err)
+			handler.CheckError(err)
 			for i, status := range todoStatus{
 				fmt.Printf("%v) %s\n", i, status)
 			}
 			status, err = strconv.ParseUint(getUserInput("Status : "), 10, 64)
-			checkError(err)
+			handler.CheckError(err)
 			if status > 2 {
 				fmt.Println("> Update Status Failed, please input 0-2")
 				continue
@@ -78,19 +80,19 @@ func main() {
 		case 7:
 			fmt.Println("> SoftDelete Todo")
 			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
-			checkError(err)
+			handler.CheckError(err)
 			softDelete(index)
 
 		case 8:
 			fmt.Println("> Restore Todo (From SoftDelete)")
 			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
-			checkError(err)
+			handler.CheckError(err)
 			restore(index)
 
 		case 9:
 			fmt.Println("> Destroy (Delete Permanent)")
 			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
-			checkError(err)
+			handler.CheckError(err)
 			if !verifyUserAction() {
 				fmt.Println("> Destroy Failed, the verify pin is wrong")
 				continue
@@ -111,80 +113,6 @@ func main() {
 	}
 }
 
-// checkError checks if there is an error and prints it 
-// to the console. If there is an error, the program 
-// will exit with a status code of 1.
-func checkError(err error) {
-	// If there is an error
-	if err != nil {
-		// Print the error to the console
-		fmt.Println("> error :", err)
-
-		// Exit the program with a status code of 1
-		os.Exit(1)
-	}
-}
-
-// getENV retrieves environment variables from a .env file 
-// at the specified path and returns them in a map.
-func getENV() map[string]string {
-	// Create an empty map to store the environment variables
-	result := make(map[string]string)
-
-	// A slice of keys for the environment variables we want to retrieve
-	keys := []string{"dbname", "user", "port", "host", "password"}
-
-	// The path to the .env file
-	path := "C:/Users/Lenovo/go/src/DB_CLI/.env"
-
-	// Check if the .env file exists
-	_, err := os.Stat(path)
-	checkError(err)
-
-	// Load the environment variables from the .env file
-	godotenv.Load(path)
-
-	// Iterate over the keys and retrieve
-	// the corresponding environment variables
-	for _, key := range keys {
-		result[key], _ = os.LookupEnv(key)
-		// If the environment variable is an empty string,
-		// there was an error retrieving it
-		if result[key] == "" {
-			// Modify the key to include a message about the error
-			key = "typo in key="+key
-			checkError(errors.New(key))
-		}
-	}
-
-	// Return the map of environment variables
-	return result
-}
-
-
-// connects to a PostgreSQL database using the specified 
-// connection parameters and returns the connection.
-func databaseConnection() *sql.DB {
-	// Declare variables to store the connection and any errors that may occur
-	var connection *sql.DB
-	var err error
-
-	// Get the connection parameters from the .env file
-	env := getENV()
-
-	// Construct the connection string using the retrieved parameters
-	param := fmt.Sprintf("connect_timeout=20 user=%s host=%s port=%s dbname=%s password=%s",
-		env["user"], env["host"], env["port"], env["dbname"], env["password"])
-
-	// Open a connection to the database using the connection string
-	connection, err = sql.Open("postgres", param)
-	checkError(err)
-
-	// Return the connection
-	return connection
-}
-
-
 // getUserInput prompts the user with the provided 
 // question and returns their response as a string.
 func getUserInput(question string) string {
@@ -195,8 +123,8 @@ func getUserInput(question string) string {
 	// Attempt to read the user's response
 	if !scanner.Scan() {
 		// If there was an error reading the response,
-		// pass an error to the checkError function
-		checkError(errors.New("scanning error"))
+		// pass an error to the CheckError function
+		handler.CheckError(errors.New("scanning error"))
 	}
 
 	// Return the user's response
@@ -229,7 +157,7 @@ func get(query string) {
 	rows, err = db.Query(query)
 
 	// Check for any errors that occurred during the query execution
-	checkError(err)
+	handler.CheckError(err)
 
 	// Print a header message
 	fmt.Println("\nid todo (s:status) (d:deleted_at)")
@@ -240,7 +168,7 @@ func get(query string) {
 		err = rows.Scan(&todo.Id, &todo.Todo, &todo.Status, &todo.Created_at, &todo.Deleted_at)
 
 		// Check for any errors that occurred during the scan
-		checkError(err)
+		handler.CheckError(err)
 
 		// row representation of the todo data
 		row = fmt.Sprintf("%v) %s (s:%s) ", todo.Id, todo.Todo, todo.Status)
@@ -290,11 +218,11 @@ func create(todo string) {
 	result, err = db.Exec(storeSQL)
 	
 	// Check for any errors that might have occurred.
-	checkError(err)
+	handler.CheckError(err)
 	
 	// Get the number of rows affected by the SQL statement.
 	rowsAffect, err = result.RowsAffected()
-	checkError(err)
+	handler.CheckError(err)
 	
 	// Check if any rows were affected by the SQL statement.
 	checkingRowsAffected(rowsAffect, "Create New Todo")
@@ -306,11 +234,11 @@ func update(index uint64, newTodo string) {
 
 	// Execute the UPDATE statement
 	result, err := db.Exec(updateSQL)
-	checkError(err)
+	handler.CheckError(err)
 
 	// Get the number of rows affected by the UPDATE statement
 	rowsAffect, err := result.RowsAffected()
-	checkError(err)
+	handler.CheckError(err)
 
 	// Check the number of rows affected and print a message
 	checkingRowsAffected(rowsAffect, "Update Todo")
@@ -323,11 +251,11 @@ func updateStatus(index uint64, status string) {
 
 	// Execute the update query and store the result
 	result, err := db.Exec(updateSQl)
-	checkError(err)
+	handler.CheckError(err)
 
 	// Get the number of rows affected by the update query
 	rowsAffect, err := result.RowsAffected()
-	checkError(err)
+	handler.CheckError(err)
 
 	// Pass the number of affected rows and 
 	// a message to the checkingRowsAffected function
@@ -344,11 +272,11 @@ func softDelete(index uint64) {
 
 	// Execute the UPDATE statement
 	result, err := db.Exec(softDeleteSQL)
-	checkError(err)
+	handler.CheckError(err)
 
 	// Get the number of rows affected by the UPDATE statement
 	rowsAffect, err := result.RowsAffected()
-	checkError(err)
+	handler.CheckError(err)
 
 	// Check the number of rows affected and print a message
 	checkingRowsAffected(rowsAffect, "Soft Delete Todo")
@@ -361,11 +289,11 @@ func restore(index uint64) {
 
 	// Execute the UPDATE statement
 	result, err := db.Exec(restoreSQL)
-	checkError(err)
+	handler.CheckError(err)
 
 	// Get the number of rows affected by the UPDATE statement
 	rowsAffect, err := result.RowsAffected()
-	checkError(err)
+	handler.CheckError(err)
 
 	// Check the number of rows affected and print a message
 	checkingRowsAffected(rowsAffect, "Restore Todo")
@@ -386,7 +314,7 @@ func verifyUserAction() bool {
 
 	// Get user input and convert it to a uint64
 	userInput, err = strconv.ParseUint(getUserInput("Pin : "), 10, 64)
-	checkError(err)
+	handler.CheckError(err)
 
 	// Return whether the user input matches the random integer
 	return randomInt == int(userInput)
@@ -398,11 +326,11 @@ func destroy(index uint64) {
 
 	// Execute the DELETE statement
 	result, err := db.Exec(destroySQL)
-	checkError(err)
+	handler.CheckError(err)
 
 	// Get the number of rows affected by the DELETE statement
 	rowsAffect, err := result.RowsAffected()
-	checkError(err)
+	handler.CheckError(err)
 
 	// Check the number of rows affected and print a message
 	checkingRowsAffected(rowsAffect, "Restore Todo")
@@ -427,24 +355,8 @@ func hardReset() {
 
 	// Execute the reset SQL statement
 	_, err := db.Exec(resetSQL)
-	checkError(err)
+	handler.CheckError(err)
 
 	// Print a success message
 	fmt.Println("> Success: Hard Reset")
-}
-
-func showBanner() {
-	fmt.Println(`                
-   .d8888b.       88888888888       8888888b.           888      d8b          888    
-  d88P  Y88b          888           888  "Y88b          888      Y8P          888    
-  888    888          888           888    888          888                   888    
-  888         .d88b.  888   .d88b.  888    888  .d88b.  888      888 .d8888b  888888 
-  888  88888 d88""88b 888  d88""88b 888    888 d88""88b 888      888 88K      888    
-  888    888 888  888 888  888  888 888    888 888  888 888      888 "Y8888b. 888    
-  Y88b  d88P Y88..88P 888  Y88..88P 888  .d88P Y88..88P 888      888      X88 Y88b.  
-   "Y8888P88  "Y88P"  888   "Y88P"  8888888P"   "Y88P"  88888888 888  88888P'  "Y888  
-
-   					  ::by ERN::
-			  :: github.com/Lukmanern/go-supabase ::     
-	`)
 }

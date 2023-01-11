@@ -1,4 +1,4 @@
-module main
+module go-supabase
 
 go 1.19
 
