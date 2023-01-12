@@ -3,12 +3,11 @@ package main
 import (
 	"bufio"
 	"database/sql"
-	"errors"
 	"fmt"
 	"go-supabase/banner"
 	"go-supabase/database"
 	"go-supabase/handler"
-	"math/rand"
+	"go-supabase/helper"
 	"os"
 	"strconv"
 	"time"
@@ -35,7 +34,7 @@ func main() {
 	banner.ShowBanner()
 	for {
 		showOptions()
-		userInput, err = strconv.ParseUint(getUserInput("Option : "), 10, 64)
+		userInput, err = strconv.ParseUint(helper.GetUserInput("Option : "), 10, 64)
 		handler.CheckError(err)
 
 		switch userInput{
@@ -53,23 +52,23 @@ func main() {
 			get("SELECT * FROM todos WHERE deleted_at IS NOT NULL ORDER BY id")
 		case 4:
 			fmt.Println("> Create New Todo")
-			todo = getUserInput("New Todo : ")
+			todo = helper.GetUserInput("New Todo : ")
 			create(todo)
 		case 5:
 			fmt.Println("> Edit Todo")
-			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
+			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
-			todo = getUserInput("New Todo : ")
+			todo = helper.GetUserInput("New Todo : ")
 			update(index, todo)
 
 		case 6:
 			fmt.Println("> Update Todo's Status")
-			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
+			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
 			for i, status := range todoStatus{
 				fmt.Printf("%v) %s\n", i, status)
 			}
-			status, err = strconv.ParseUint(getUserInput("Status : "), 10, 64)
+			status, err = strconv.ParseUint(helper.GetUserInput("Status : "), 10, 64)
 			handler.CheckError(err)
 			if status > 2 {
 				fmt.Println("> Update Status Failed, please input 0-2")
@@ -79,29 +78,29 @@ func main() {
 
 		case 7:
 			fmt.Println("> SoftDelete Todo")
-			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
+			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
 			softDelete(index)
 
 		case 8:
 			fmt.Println("> Restore Todo (From SoftDelete)")
-			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
+			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
 			restore(index)
 
 		case 9:
 			fmt.Println("> Destroy (Delete Permanent)")
-			index, err = strconv.ParseUint(getUserInput("Todo Index : "), 10, 64)
+			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
-			if !verifyUserAction() {
+			if !helper.VerifyUserAction() {
 				fmt.Println("> Destroy Failed, the verify pin is wrong")
 				continue
 			}
 			destroy(index)
 
 		case 10:
-			fmt.Println("> Hard Reset (Drop -> re-create Table)")
-			if !verifyUserAction() {
+			fmt.Println("> Hard Reset (Drop todo-table -> re-create table)")
+			if !helper.VerifyUserAction() {
 				fmt.Println("> Destroy Failed, the verify pin is wrong")
 				continue
 			}
@@ -111,24 +110,6 @@ func main() {
 			fmt.Println("> Please re-input 0 to 10")
 		}
 	}
-}
-
-// getUserInput prompts the user with the provided 
-// question and returns their response as a string.
-func getUserInput(question string) string {
-	// Print the question to the console
-	fmt.Print("\n"+question)
-
-	// scanner is Global variable
-	// Attempt to read the user's response
-	if !scanner.Scan() {
-		// If there was an error reading the response,
-		// pass an error to the CheckError function
-		handler.CheckError(errors.New("scanning error"))
-	}
-
-	// Return the user's response
-	return scanner.Text()
 }
 
 // prints a list of options to the console.
@@ -297,27 +278,6 @@ func restore(index uint64) {
 
 	// Check the number of rows affected and print a message
 	checkingRowsAffected(rowsAffect, "Restore Todo")
-}
-
-func verifyUserAction() bool {
-	// Initialize variables
-	var randomInt int
-	var userInput uint64
-	var err error
-
-	// Generate a random integer between 1000 and 9999
-	rand.Seed(time.Now().Unix())
-	randomInt = rand.Intn(9999-1000) + 1000
-
-	// Prompt the user to re-type the pin
-	fmt.Println("Verify your action !\nRe-type the pin : ", randomInt)
-
-	// Get user input and convert it to a uint64
-	userInput, err = strconv.ParseUint(getUserInput("Pin : "), 10, 64)
-	handler.CheckError(err)
-
-	// Return whether the user input matches the random integer
-	return randomInt == int(userInput)
 }
 
 func destroy(index uint64) {
