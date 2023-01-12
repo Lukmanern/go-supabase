@@ -13,10 +13,12 @@ import (
 // getENV retrieves environment variables from a .env file
 // at the specified path and returns them in a map.
 func getENV() map[string]string {
-	// Create an empty map to store the environment variables
+	// Create an empty map to store 
+	// the environment variables
 	result := make(map[string]string)
 
-	// A slice of keys for the environment variables we want to retrieve
+	// A slice of keys for the environment 
+	// variables we want to retrieve
 	keys := []string{"dbname", "user", "port", "host", "password"}
 
 	// The path to the .env file
@@ -26,7 +28,8 @@ func getENV() map[string]string {
 	_, err := os.Stat(path)
 	handler.CheckError(err)
 
-	// Load the environment variables from the .env file
+	// Load the environment variables 
+	// from the .env file
 	godotenv.Load(path)
 
 	// Iterate over the keys and retrieve
@@ -36,7 +39,8 @@ func getENV() map[string]string {
 		// If the environment variable is an empty string,
 		// there was an error retrieving it
 		if result[key] == "" {
-			// Modify the key to include a message about the error
+			// Modify the key to include 
+			// a message about the error
 			key = "typo in key="+key
 			handler.CheckError(errors.New(key))
 		}
@@ -49,7 +53,8 @@ func getENV() map[string]string {
 // connects to a PostgreSQL database using the specified 
 // connection parameters and returns the connection.
 func DatabaseConnection() *sql.DB {
-	// Declare variables to store the connection and any errors that may occur
+	// Declare variables to store the connection 
+	// and any errors that may occur
 	var connection *sql.DB
 	var err error
 
@@ -60,7 +65,8 @@ func DatabaseConnection() *sql.DB {
 	param := fmt.Sprintf("connect_timeout=20 user=%s host=%s port=%s dbname=%s password=%s",
 		env["user"], env["host"], env["port"], env["dbname"], env["password"])
 
-	// Open a connection to the database using the connection string
+	// Open a connection to the database 
+	// using the connection string
 	connection, err = sql.Open("postgres", param)
 	handler.CheckError(err)
 

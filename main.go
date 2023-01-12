@@ -21,7 +21,7 @@ type Todos struct {
 	Deleted_at 			 sql.NullString
 }
 
-var db	= database.DatabaseConnection()
+var db = database.DatabaseConnection()
 
 func main() {
 	var userInput, index, status uint64
