@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"database/sql"
 	"fmt"
 	"go-supabase/banner"
@@ -23,7 +22,6 @@ type Todos struct {
 }
 
 var db	= database.DatabaseConnection()
-var scanner = bufio.NewScanner(os.Stdin)
 
 func main() {
 	var userInput, index, status uint64
@@ -124,20 +122,24 @@ func showOptions() {
 	fmt.Println("5. Edit Todo")
 }
 
-// get retrieves rows from the "todos" table based on the provided query and prints them to the console.
+// get retrieves rows from the "todos" table based on 
+// the provided query and prints them to the console.
 func get(query string) {
 	// Declare variables to store the retrieved 
 	// todo data and any errors that may occur
 	var todo Todos
 	var rows *sql.Rows
-	// row representation of the todo data
+	// row representation 
+	// of the todo data
 	var row string
 	var err error
 
-	// Execute the query and store the result rows
+	// Execute the query and 
+	// store the result rows
 	rows, err = db.Query(query)
 
-	// Check for any errors that occurred during the query execution
+	// Check for any errors that occurred 
+	// during the query execution
 	handler.CheckError(err)
 
 	// Print a header message
@@ -146,15 +148,15 @@ func get(query string) {
 	// Iterate over the result rows
 	for rows.Next() {
 		// Scan the current row into the todo variable
-		err = rows.Scan(&todo.Id, &todo.Todo, &todo.Status, &todo.Created_at, &todo.Deleted_at)
-
-		// Check for any errors that occurred during the scan
+		err = rows.Scan(&todo.Id, &todo.Todo, &todo.Status, 
+			&todo.Created_at, &todo.Deleted_at)
 		handler.CheckError(err)
 
 		// row representation of the todo data
 		row = fmt.Sprintf("%v) %s (s:%s) ", todo.Id, todo.Todo, todo.Status)
 
-		// If the deleted_at column is not null, include it in the string representation
+		// If the deleted_at column is not null, 
+		// include it in the string representation
 		if todo.Deleted_at.Valid {
 			row += fmt.Sprintf("(d:%s)", todo.Deleted_at.String)
 		}
@@ -182,7 +184,8 @@ func checkingRowsAffected(rowsAffected int64, functionName string) {
 	fmt.Printf("> Failed to %s, affect 0 row in database", functionName)
 }
 
-// The create function inserts a new todo into the database.
+// The create function inserts 
+// a new todo into the database.
 func create(todo string) {
 	// Initialize variables for storing the SQL 
 	// statement, the result of executing the statement,
@@ -197,8 +200,6 @@ func create(todo string) {
 	
 	// Execute the SQL statement.
 	result, err = db.Exec(storeSQL)
-	
-	// Check for any errors that might have occurred.
 	handler.CheckError(err)
 	
 	// Get the number of rows affected by the SQL statement.
@@ -225,9 +226,11 @@ func update(index uint64, newTodo string) {
 	checkingRowsAffected(rowsAffect, "Update Todo")
 }
 
-// updateStatus updates the status of a todo item in the "todos" table of the database
+// updateStatus updates the status of a todo item 
+// in the "todos" table of the database
 func updateStatus(index uint64, status string) {
-	// Construct the UPDATE SQL query using the provided status and index values
+	// Construct the UPDATE SQL query using 
+	// the provided status and index values
 	updateSQl := fmt.Sprintf("UPDATE todos SET status = '%s' WHERE id = %v", status, index)
 
 	// Execute the update query and store the result
@@ -255,11 +258,13 @@ func softDelete(index uint64) {
 	result, err := db.Exec(softDeleteSQL)
 	handler.CheckError(err)
 
-	// Get the number of rows affected by the UPDATE statement
+	// Get the number of rows affected 
+	// by the UPDATE statement
 	rowsAffect, err := result.RowsAffected()
 	handler.CheckError(err)
 
-	// Check the number of rows affected and print a message
+	// Check the number of rows affected 
+	// and print a message
 	checkingRowsAffected(rowsAffect, "Soft Delete Todo")
 }
 
@@ -272,11 +277,13 @@ func restore(index uint64) {
 	result, err := db.Exec(restoreSQL)
 	handler.CheckError(err)
 
-	// Get the number of rows affected by the UPDATE statement
+	// Get the number of rows affected 
+	// by the UPDATE statement
 	rowsAffect, err := result.RowsAffected()
 	handler.CheckError(err)
 
-	// Check the number of rows affected and print a message
+	// Check the number of rows affected 
+	// and print a message
 	checkingRowsAffected(rowsAffect, "Restore Todo")
 }
 
@@ -288,11 +295,13 @@ func destroy(index uint64) {
 	result, err := db.Exec(destroySQL)
 	handler.CheckError(err)
 
-	// Get the number of rows affected by the DELETE statement
+	// Get the number of rows affected 
+	// by the DELETE statement
 	rowsAffect, err := result.RowsAffected()
 	handler.CheckError(err)
 
-	// Check the number of rows affected and print a message
+	// Check the number of rows affected 
+	// and print a message
 	checkingRowsAffected(rowsAffect, "Restore Todo")
 }
 
