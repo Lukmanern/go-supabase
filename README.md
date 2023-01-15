@@ -46,6 +46,30 @@ Loot at `func getENV()`, and don't forget to change the `path` value.
 path := "C:/Users/Lenovo/go/src/DB_CLI/.env"
 ```
 
+# Directory Structure
+
+```sh
+   ├── .gitignore
+   ├── README.md
+   ├── banner
+   │   └── banner.go -> show banner
+   ├── database
+   │   ├── .env
+   │   ├── .env.example
+   │   ├── create-table.sql -> connection and create sql
+   │   └── db.go
+   ├── dev-note.md -> note for developers
+   ├── go.mod
+   ├── go.sum
+   ├── handler
+   │   └── error.go -> throw err and exit app
+   ├── helper
+   │   ├── input.go -> get user input
+   │   └── options.go -> show menu/ options
+   ├── main.go
+   └── usage.png
+```
+
 # Supabase
 
 Supabase is an open-source platform for building scalable web applications. It provides a set of tools and services for building modern, real-time applications, including a PostgreSQL database, a serverless functions platform, and a real-time API.
