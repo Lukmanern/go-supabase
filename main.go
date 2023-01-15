@@ -9,6 +9,8 @@ import (
 	"go-supabase/helper"
 	"os"
 	"strconv"
+
+	// "text/tabwriter"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -317,3 +319,12 @@ func hardReset() {
 	// Print a success message
 	fmt.Println("> Success: Hard Reset")
 }
+
+// func makeTabel() *tabwriter.Writer {
+// 	// see https://pkg.go.dev/text/tabwriter#NewWriter
+// 	table := tabwriter.NewWriter(os.Stdout, 10, 8, 2, '\t', tabwriter.AlignRight)
+// 	fmt.Fprintln(table, "Key\tValue")
+// 	fmt.Fprintln(table, "---\t-----")
+
+// 	return table
+// }
