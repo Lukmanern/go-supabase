@@ -127,9 +127,6 @@ func get(query string) {
 	// Execute the query and 
 	// store the result rows
 	rows, err = db.Query(query)
-
-	// Check for any errors that occurred 
-	// during the query execution
 	handler.CheckError(err)
 
 	// Print a header message
@@ -319,12 +316,3 @@ func hardReset() {
 	// Print a success message
 	fmt.Println("> Success: Hard Reset")
 }
-
-// func makeTabel() *tabwriter.Writer {
-// 	// see https://pkg.go.dev/text/tabwriter#NewWriter
-// 	table := tabwriter.NewWriter(os.Stdout, 10, 8, 2, '\t', tabwriter.AlignRight)
-// 	fmt.Fprintln(table, "Key\tValue")
-// 	fmt.Fprintln(table, "---\t-----")
-
-// 	return table
-// }
