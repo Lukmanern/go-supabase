@@ -115,6 +115,8 @@ func main() {
 // get retrieves rows from the "todos" table based on 
 // the provided query and prints them to the console.
 func get(query string) {
+	// couse table.Flush isn't stable
+	defer os.Stdout.Sync()
 	// Declare variables to store the retrieved 
 	// todo data and any errors that may occur
 	var todo Todos
@@ -124,13 +126,15 @@ func get(query string) {
 	var row string
 	var err error
 
+	table := helper.GetTableStructure()
+
 	// Execute the query and 
 	// store the result rows
 	rows, err = db.Query(query)
 	handler.CheckError(err)
 
 	// Print a header message
-	fmt.Println("\nid todo (s:status) (d:deleted_at)")
+	// fmt.Println("\nid todo (s:status) (d:deleted_at)")
 
 	// Iterate over the result rows
 	for rows.Next() {
@@ -140,17 +144,20 @@ func get(query string) {
 		handler.CheckError(err)
 
 		// row representation of the todo data
-		row = fmt.Sprintf("%v) %s (s:%s) ", todo.Id, todo.Todo, todo.Status)
-
+		// row = fmt.Sprintf("%v) %s (s:%s) ", todo.Id, todo.Todo, todo.Status)
+		row = fmt.Sprintf("%v\t%v\t%v", todo.Id, todo.Todo, todo.Status)
 		// If the deleted_at column is not null, 
 		// include it in the string representation
 		if todo.Deleted_at.Valid {
-			row += fmt.Sprintf("(d:%s)", todo.Deleted_at.String)
+			// row += fmt.Sprintf("(d:%s)", todo.Deleted_at.String)
+			row += fmt.Sprintf("\t%s", todo.Deleted_at.String)
 		}
 
 		// Print the string representation of the todo data
-		fmt.Println(row)
+		// fmt.Println(row)
+		fmt.Fprintln(table, row)
 	}
+	table.Flush()
 }
 
 // The checkingRowsAffected function checks if a certain number 
