@@ -70,6 +70,8 @@ path := "C:/Users/Lenovo/go/src/DB_CLI/.env"
    └── usage.png
 ```
 
+![update.PNG](https://raw.githubusercontent.com/Lukmanern/go-supabase/master/update.png)
+
 # Supabase
 
 Supabase is an open-source platform for building scalable web applications. It provides a set of tools and services for building modern, real-time applications, including a PostgreSQL database, a serverless functions platform, and a real-time API.
