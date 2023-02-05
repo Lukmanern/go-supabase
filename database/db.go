@@ -2,74 +2,68 @@ package database
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"go-supabase/handler"
 	"os"
 
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
-// getENV retrieves environment variables from a .env file
-// at the specified path and returns them in a map.
+type databaseConfig struct {
+	dbname   string
+	user     string
+	port     string
+	host     string
+	password string
+}
+
 func getENV() map[string]string {
 	// Create an empty map to store 
 	// the environment variables
 	result := make(map[string]string)
-
-	// A slice of keys for the environment 
-	// variables we want to retrieve
 	keys := []string{"dbname", "user", "port", "host", "password"}
-
-	// The path to the .env file
 	path := "C:/Users/Lenovo/go/src/DB_CLI/database/.env"
 
 	// Check if the .env file exists
-	_, err := os.Stat(path)
-	handler.CheckError(err)
-
-	// Load the environment variables 
-	// from the .env file
-	godotenv.Load(path)
+	if _, err := os.Stat(path); err != nil {
+		handler.CheckError(err)
+	}
+	if err := godotenv.Load(path); err != nil {
+		handler.CheckError(err)
+	}
 
 	// Iterate over the keys and retrieve
 	// the corresponding environment variables
 	for _, key := range keys {
-		result[key], _ = os.LookupEnv(key)
-		// If the environment variable is an empty string,
-		// there was an error retrieving it
-		if result[key] == "" {
-			// Modify the key to include 
-			// a message about the error
-			key = "typo in key="+key
-			handler.CheckError(errors.New(key))
+		if val := os.Getenv(key); val == "" {
+			handler.CheckError(fmt.Errorf("typo in key=%s", key))
+		} else {
+			result[key] = val
 		}
 	}
 
-	// Return the map of environment variables
 	return result
 }
 
-// connects to a PostgreSQL database using the specified 
-// connection parameters and returns the connection.
-func DatabaseConnection() *sql.DB {
-	// Declare variables to store the connection 
-	// and any errors that may occur
-	var connection *sql.DB
-	var err error
 
-	// Get the connection parameters from the .env file
+func DatabaseConnection() *sql.DB {
 	env := getENV()
 
-	// Construct the connection string using the retrieved parameters
-	param := fmt.Sprintf("connect_timeout=20 user=%s host=%s port=%s dbname=%s password=%s",
-		env["user"], env["host"], env["port"], env["dbname"], env["password"])
+	config := databaseConfig{
+		dbname:   env["dbname"],
+		user:     env["user"],
+		port:     env["port"],
+		host:     env["host"],
+		password: env["password"],
+	}
 
-	// Open a connection to the database 
-	// using the connection string
-	connection, err = sql.Open("postgres", param)
+	// fmt.Println("config :", config)
+
+	param := fmt.Sprintf("user=%s host=%s port=%s dbname=%s password=%s",
+		config.user, config.host, config.port, config.dbname, config.password)
+	conn, err := sql.Open("postgres", param)
 	handler.CheckError(err)
 
-	// Return the connection
-	return connection
+	return conn
 }

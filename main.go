@@ -23,7 +23,7 @@ type Todos struct {
 	Deleted_at 			 sql.NullString
 }
 
-var db = database.DatabaseConnection()
+var db *sql.DB = database.DatabaseConnection()
 
 func main() {
 	banner.ShowBanner()
