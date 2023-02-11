@@ -3,15 +3,14 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"strconv"
+	"time"
+
 	"go-supabase/banner"
 	"go-supabase/database"
 	"go-supabase/handler"
 	"go-supabase/helper"
-	"os"
-	"strconv"
-
-	// "text/tabwriter"
-	"time"
 
 	_ "github.com/lib/pq"
 )
