@@ -24,6 +24,7 @@ type Todos struct {
 }
 
 var db *sql.DB = database.DatabaseConnection()
+var colorRed, colorReset, colorYellow, colorGreen string = "\033[31m", "\033[0m", "\033[33m", "\033[32m"
 
 func main() {
 	banner.ShowBanner()
@@ -71,7 +72,7 @@ func main() {
 			status, err = strconv.ParseUint(helper.GetUserInput("Status : "), 10, 64)
 			handler.CheckError(err)
 			if status > 2 {
-				fmt.Println("> Update Status Failed, please input 0-2")
+				fmt.Println(colorRed, "> Update Status Failed, please input 0-2", colorReset)
 				continue
 			}
 			updateStatus(index, todoStatus[status])
@@ -93,7 +94,7 @@ func main() {
 			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
 			if !helper.VerifyUserAction() {
-				fmt.Println("> Destroy Failed, the verify pin is wrong")
+				fmt.Println(colorRed, "> Destroy Failed, the verify pin is wrong", colorReset)
 				continue
 			}
 			destroy(index)
@@ -101,13 +102,13 @@ func main() {
 		case 10:
 			fmt.Println("> Hard Reset (Drop todo-table -> re-create table)")
 			if !helper.VerifyUserAction() {
-				fmt.Println("> Destroy Failed, the verify pin is wrong")
+				fmt.Println(colorRed, "> Destroy Failed, the verify pin is wrong", colorReset)
 				continue
 			}
 			hardReset()
 
 		default:
-			fmt.Println("> Please re-input 0 to 10")
+			fmt.Println(colorYellow, "> Please re-input 0 to 10", colorReset)
 		}
 	}
 }
@@ -165,17 +166,20 @@ func get(query string) {
 // If at least one row was affected, it prints a success message. 
 // Otherwise, it prints a failure message.
 func checkingRowsAffected(rowsAffected int64, functionName string) {
+	s := ""
 	// If at least one row was affected...
 	if rowsAffected > 0 {
 		// ...print a success message.
-		fmt.Printf("> Success %s, affect %v rows in database\n", functionName, rowsAffected)
+		s = fmt.Sprintf("> Success %s, affect %v rows in database\n", functionName, rowsAffected)
+		fmt.Println(colorGreen, s, colorReset)
 		// stop the function
 		return
 	}
 	
 	// If no rows were affected...
 	// ...print a failure message.
-	fmt.Printf("> Failed to %s, affect 0 row in database", functionName)
+	s = fmt.Sprintf("> Failed to %s, affect 0 row in database\n", functionName)
+	fmt.Println(colorRed, s, colorReset)
 }
 
 // The create function inserts 
@@ -321,5 +325,5 @@ func hardReset() {
 	handler.CheckError(err)
 
 	// Print a success message
-	fmt.Println("> Success: Hard Reset")
+	fmt.Println(colorGreen, "> Success: Hard Reset", colorReset)
 }

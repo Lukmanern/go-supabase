@@ -12,7 +12,7 @@ func CheckError(err error) {
 	// If there is an error
 	if err != nil {
 		// Print the error to the console
-		fmt.Println("> error :", err)
+		fmt.Println("\033[31m", "> error :", err, "\033[0m")
 
 		// Exit the program with a status code of 1
 		os.Exit(1)
