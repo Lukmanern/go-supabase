@@ -32,7 +32,7 @@ func main() {
 	var userInput, index, status uint64
 	var todo string
 	var err error
-	var todoStatus = []string{"done", "inprogress", "todo"}
+	var todoOptionsStatus = []string{"done", "inprogress", "todo"}
 	for {
 		helper.ShowOptions()
 		userInput, err = strconv.ParseUint(helper.GetUserInput("Option : "), 10, 64)
@@ -66,7 +66,7 @@ func main() {
 			fmt.Println("> Update Todo's Status")
 			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
-			for i, status := range todoStatus {
+			for i, status := range todoOptionsStatus {
 				fmt.Printf("%v) %s\n", i, status)
 			}
 			status, err = strconv.ParseUint(helper.GetUserInput("Status : "), 10, 64)
@@ -75,7 +75,7 @@ func main() {
 				fmt.Println(colorRed, "> Update Status Failed, please input 0-2", colorReset)
 				continue
 			}
-			updateStatus(index, todoStatus[status])
+			updateStatus(index, todoOptionsStatus[status])
 
 		case 7:
 			fmt.Println("> SoftDelete Todo")
