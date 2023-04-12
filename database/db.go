@@ -19,7 +19,7 @@ type databaseConfig struct {
 }
 
 func getENV() map[string]string {
-	// Create an empty map to store 
+	// Create an empty map to store
 	// the environment variables
 	result := make(map[string]string)
 	keys := []string{"dbname", "user", "port", "host", "password"}
@@ -45,7 +45,6 @@ func getENV() map[string]string {
 
 	return result
 }
-
 
 func DatabaseConnection() *sql.DB {
 	env := getENV()
