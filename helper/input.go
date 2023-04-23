@@ -17,7 +17,7 @@ var scanner = bufio.NewScanner(os.Stdin)
 // question and returns their response as a string.
 func GetUserInput(question string) string {
 	// Print the question to the console
-	fmt.Print("\n"+question)
+	fmt.Print("\n" + question)
 
 	// scanner is Global variable
 	// Attempt to read the user's response
@@ -38,7 +38,7 @@ func VerifyUserAction() bool {
 	var userInput uint64
 	var err error
 
-	// Generate a random integer 
+	// Generate a random integer
 	// between 1000 and 9999
 	rand.Seed(time.Now().Unix())
 	randomInt = rand.Intn(9999-1000) + 1000
@@ -50,7 +50,7 @@ func VerifyUserAction() bool {
 	userInput, err = strconv.ParseUint(GetUserInput("Pin : "), 10, 64)
 	handler.CheckError(err)
 
-	// Return whether the user input 
+	// Return whether the user input
 	// matches the random integer
 	return randomInt == int(userInput)
 }
