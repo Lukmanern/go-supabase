@@ -1,5 +1,0 @@
-package vars
-
-const (
-	errNotFound = ""
-)

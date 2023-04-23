@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"time"
 
-	"go-supabase/banner"
 	"go-supabase/database"
 	"go-supabase/handler"
 	"go-supabase/helper"
+	"go-supabase/vars"
 
 	_ "github.com/lib/pq"
 )
@@ -23,11 +23,10 @@ type Todos struct {
 }
 
 var db *sql.DB = database.DatabaseConnection()
-var colorRed, colorReset, colorYellow, colorGreen string = "\033[31m", "\033[0m", "\033[33m", "\033[32m"
 
 func main() {
 	defer db.Close()
-	banner.ShowBanner()
+	fmt.Println(vars.Banner)
 
 	var userInput, index, status uint64
 	var todo string
@@ -72,7 +71,7 @@ func main() {
 			status, err = strconv.ParseUint(helper.GetUserInput("Status : "), 10, 64)
 			handler.CheckError(err)
 			if status > 2 {
-				fmt.Println(colorRed, "> Update Status Failed, please input 0-2", colorReset)
+				fmt.Println(vars.ColorRed, "> Update Status Failed, please input 0-2", vars.ColorDefault)
 				continue
 			}
 			updateStatus(index, todoOptionsStatus[status])
@@ -94,21 +93,21 @@ func main() {
 			index, err = strconv.ParseUint(helper.GetUserInput("Todo Index : "), 10, 64)
 			handler.CheckError(err)
 			if !helper.VerifyUserAction() {
-				fmt.Println(colorRed, "> Destroy Failed, the verify pin is wrong", colorReset)
+				fmt.Println(vars.ColorRed, "> Destroy Failed, the verify pin is wrong", vars.ColorDefault)
 				continue
 			}
 			destroy(index)
 
 		case 10:
-			fmt.Println("> Hard Reset (Drop todo-table -> re-create table)")
+			fmt.Println(vars.ColorYellow, "warning\n> Hard Reset (Drop todo-table -> re-create table)", vars.ColorDefault)
 			if !helper.VerifyUserAction() {
-				fmt.Println(colorRed, "> Destroy Failed, the verify pin is wrong", colorReset)
+				fmt.Println(vars.ColorRed, "> Destroy Failed, the verify pin is wrong", vars.ColorDefault)
 				continue
 			}
 			hardReset()
 
 		default:
-			fmt.Println(colorYellow, "> Please re-input 0 to 10", colorReset)
+			fmt.Println(vars.ColorYellow, "> Please re-input 0 to 10", vars.ColorDefault)
 		}
 	}
 }
@@ -171,7 +170,7 @@ func checkingRowsAffected(rowsAffected int64, functionName string) {
 	if rowsAffected > 0 {
 		// ...print a success message.
 		s = fmt.Sprintf("> Success %s, affect %v rows in database\n", functionName, rowsAffected)
-		fmt.Println(colorGreen, s, colorReset)
+		fmt.Println(vars.ColorGreen, s, vars.ColorDefault)
 		// stop the function
 		return
 	}
@@ -179,7 +178,7 @@ func checkingRowsAffected(rowsAffected int64, functionName string) {
 	// If no rows were affected...
 	// ...print a failure message.
 	s = fmt.Sprintf("> Failed to %s, affect 0 row in database\n", functionName)
-	fmt.Println(colorRed, s, colorReset)
+	fmt.Println(vars.ColorRed, s, vars.ColorDefault)
 }
 
 // The create function inserts
@@ -244,6 +243,7 @@ func updateStatus(index uint64, status string) {
 	checkingRowsAffected(rowsAffect, "Update Todo's Status")
 }
 
+// now func return time(now)
 func now() string {
 	return time.Now().Format("2006-01-02 15:04:05")
 }
@@ -323,5 +323,5 @@ func hardReset() {
 	handler.CheckError(err)
 
 	// Print a success message
-	fmt.Println(colorGreen, "> Success: Hard Reset", colorReset)
+	fmt.Println(vars.ColorGreen, "> Success: Hard Reset", vars.ColorDefault)
 }

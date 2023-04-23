@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"go-supabase/vars"
 	"os"
 )
 
@@ -12,7 +13,7 @@ func CheckError(err error) {
 	// If there is an error
 	if err != nil {
 		// Print the error to the console
-		fmt.Println("\033[31m", "> error :", err, "\033[0m")
+		fmt.Println(vars.ColorRed, "> error :", err, vars.ColorDefault)
 
 		// Exit the program with a status code of 1
 		os.Exit(1)
