@@ -1,4 +1,4 @@
-![USAGE.PNG](https://raw.githubusercontent.com/Lukmanern/go-supabase/master/usage.png)
+![USAGE.PNG](https://github.com/Lukmanern/go-supabase/blob/master/media/usage.png)
 
 # Go ToDoList with Supabase
 
@@ -70,7 +70,7 @@ path := "C:/Users/Lenovo/go/src/DB_CLI/.env"
    └── usage.png
 ```
 
-![update.PNG](https://raw.githubusercontent.com/Lukmanern/go-supabase/master/update.png)
+![update.PNG](https://github.com/Lukmanern/go-supabase/blob/master/media/update.png)
 
 # Supabase
 
