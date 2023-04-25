@@ -64,5 +64,8 @@ func DatabaseConnection() *sql.DB {
 	conn, err := sql.Open("postgres", param)
 	handler.CheckError(err)
 
+	conn.SetMaxOpenConns(5)
+	conn.SetMaxIdleConns(3)
+
 	return conn
 }
